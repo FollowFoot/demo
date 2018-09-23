@@ -23,6 +23,9 @@ public interface DemoMapper {
     @Select("SELECT * FROM test WHERE name LIKE \"%\"#{name}\"%\"")
     List<DemoEntity> findByName(String name);
     
+    @Select("SELECT * FROM test WHERE name = #{name}")
+    DemoEntity findOneByName(String name);
+    
     @Select("<script>" 
             + "SELECT * FROM test " 
             + "<where>" 
