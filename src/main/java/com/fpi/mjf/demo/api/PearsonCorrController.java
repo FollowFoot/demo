@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.fpi.mjf.demo.utils.PearsonCorrUtil;
-import com.fpi.mjf.demo.utils.PearsonCorrUtil.PearsonCorr;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -30,7 +27,6 @@ public class PearsonCorrController {
         for(String y_ : ys) {
             yd.add(Double.parseDouble(y_));
         }
-        PearsonCorr corr = PearsonCorrUtil.getCorr(xd, yd);
-        return corr.getCoefficient();
+        return PearsonCorrUtil.getCorr(xd, yd);
     }
 }

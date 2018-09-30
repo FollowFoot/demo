@@ -9,27 +9,17 @@ import java.util.List;
 public class PearsonCorrUtil {
 
     /**
-     * 禁止被初始化
+     * 使用两个数组计算相关系数<br>
+     * 如果数组长度不同，将舍弃较长数组的后端，保证两个数组等长<br>
+     * 如果两个数组都是空数组或者空指针，返回0<br>
      */
-    private PearsonCorrUtil() {}
-
-    private static final PearsonCorr getInitCorr() {
-        return new PearsonCorr();
-    }
-
-    /**
-     * 使用两个数组计算相关系数，如果数组长度不同，将返回0
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    public static final PearsonCorr getCorr(double[] x, double[] y) {
+    public static final Double getCorr(double[] x, double[] y) {
         if (x == null || y == null || x.length == 0 || y.length == 0) {
-            return getInitCorr();
+            return 0d;
         }
         int length = x.length > y.length ? y.length : x.length;
         double[] z;
+        // 如果x数组较长，只取和y等长的部分
         if (x.length > length) {
             z = new double[length];
             for (int i = 0; i < length; i++) {
@@ -37,6 +27,7 @@ public class PearsonCorrUtil {
             }
             return corr(z, y);
         }
+        // 如果x数组较长，只取和y等长的部分
         if (y.length > length) {
             z = new double[length];
             for (int i = 0; i < length; i++) {
@@ -47,7 +38,16 @@ public class PearsonCorrUtil {
         return corr(x, y);
     }
 
-    public static final PearsonCorr getCorr(List<Double> x, List<Double> y) {
+    /**
+     * 计算相关系数外部接口，使用两组列表计算<br>
+     * 将会丢弃掉较长的列表后面的数据，保证两组数据等长<br>
+     * 将会丢弃掉相同下标的有空值的数据：<br>
+     * if(x.get(i)==null){<br>
+     * x.delete(i);<br>
+     * y.delete(i);<br>
+     * }
+     */
+    public static Double getCorr(List<Double> x, List<Double> y) {
         int length = x.size() > y.size() ? y.size() : x.size();
         List<Double> x_ = new ArrayList<Double>();
         List<Double> y_ = new ArrayList<Double>();
@@ -73,116 +73,67 @@ public class PearsonCorrUtil {
         return array;
     }
 
-    private static final PearsonCorr corr(double[] x, double[] y) {
-        PearsonCorr corr = getInitCorr();
-        corr.x = x;
-        corr.y = y;
-        corr.xMean = getMean(x);
-        corr.yMean = getMean(y);
-        calcDenominator(corr);
-        calcNumerator(corr);
-        calcCoefficient(corr);
-        return corr;
-    }
-    
-    private static final void calcCoefficient(PearsonCorr corr) {
-        corr.coefficient = corr.numerator / corr.denominator;
-    }
-    
     /**
-     * 计算分子
-     * @param corr
+     * 计算相关系数内部入口
      */
-    private static final void calcNumerator(PearsonCorr corr) {
-        double d = 0d;
-        int length = corr.x.length;
-        for(int i = 0; i < length; i ++) {
-            d += ((corr.x[i] - corr.xMean) * (corr.y[i] - corr.yMean));
+    private static Double corr(double[] x, double[] y) {
+        double xMean = getMean(x);
+        double yMean = getMean(y);
+        // double numerator = calcNumerator(x, y, xMean, yMean);
+        // double denominator = calcDenominator(x, y, xMean, yMean);
+        // double coefficient = calcCoefficient(denominator, numerator);
+        // return coefficient;
+        return calcCoefficient(calcNumerator(x, y, xMean, yMean), calcDenominator(x, y, xMean, yMean));
+    }
+
+    /**
+     * 计算相关系数
+     */
+    private static Double calcCoefficient(double numerator, double denominator) {
+        if (denominator == 0) {
+            return 0d;
         }
-        corr.numerator = d;
+        return numerator / denominator;
     }
-    
+
     /**
-     * 计算分母
-     * @param corr
+     * 计算分子E((x - xMean) * (y - yMean))
      */
-    private static final void calcDenominator(PearsonCorr corr) {
+    private static Double calcNumerator(double[] x, double[] y, double xMean, double yMean) {
+        double d = 0d;
+        int length = x.length;
+        for (int i = 0; i < length; i++) {
+            d += ((x[i] - xMean) * (y[i] - yMean));
+        }
+        return d;
+    }
+
+    /**
+     * 计算分母 |E(x - xMean) * E(y - yMean)|
+     */
+    private static Double calcDenominator(double[] x, double[] y, double xMean, double yMean) {
         double x_ = 0d;
         double y_ = 0d;
-        for(double d : corr.x) {
-            x_ += ((d - corr.xMean) * (d - corr.xMean));
+        for (double d : x) {
+            x_ += ((d - xMean) * (d - xMean));
         }
-        for(double d : corr.y) {
-            y_ += ((d - corr.yMean) * (d - corr.yMean)); 
+        for (double d : y) {
+            y_ += ((d - yMean) * (d - yMean));
         }
-        corr.denominator = Math.sqrt(x_) * Math.sqrt(y_);
+        return Math.sqrt(x_) * Math.sqrt(y_);
     }
-    
+
     /**
      * 求平均值
+     * 
      * @param d
      * @return
      */
-    private static final double getMean(double[] d) {
-        double total = 0d;
-        for(double dv : d) {
+    private static final Double getMean(double[] d) {
+        Double total = 0d;
+        for (double dv : d) {
             total += dv;
         }
         return total / d.length;
-    }
-
-    /**
-     * 皮尔逊相关系数
-     */
-    public static class PearsonCorr {
-
-        double[] x;
-
-        double[] y;
-
-        /**
-         * 均值x
-         */
-        Double xMean;
-
-        /**
-         * 均值y
-         */
-        Double yMean;
-
-        /**
-         * 分子
-         */
-        Double numerator;
-
-        /**
-         * 分母
-         */
-        Double denominator;
-
-        /**
-         * 相关系数
-         */
-        Double coefficient;
-
-        public double[] getX() {
-            return x;
-        }
-
-        public double[] getY() {
-            return y;
-        }
-
-        public Double getxMean() {
-            return xMean;
-        }
-
-        public Double getyMean() {
-            return yMean;
-        }
-
-        public Double getCoefficient() {
-            return coefficient;
-        }
     }
 }
