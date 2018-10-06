@@ -1,0 +1,62 @@
+server:
+  port: 8000
+  context-path: /demo/
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  datasource:
+    primary:
+      url: jdbc:mysql://101.132.107.143:3306/main?useUnicode=true&characterEncoding=utf8&autoReconnect=true&autoReconnectForPools=true&rewriteBatchedStatements=true
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password: main@0404
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 5
+      minIdle: 5
+      maxActive: 100
+      maxWait: 60000
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 100
+      filters: stat,wall,log4j
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  data:
+    mongodb:
+      host: 101.132.107.143
+      port: 28018
+      username: mongo
+      password: mongo@0404
+      database: main
+  redis:
+    host: 101.132.107.143
+    port: 6379
+    password: redis@0404
+    database: 0
+    timeout: 10000
+    maxIdle: 300
+    #maxActive: 10
+    maxTotal: 10
+    maxWaitMillis: 1000  
+    minEvictableIdleTimeMillis: 300000  
+    numTestsPerEvictionRun: 1024  
+    timeBetweenEvictionRunsMillis: 30000  
+    testOnBorrow: true  
+    testWhileIdle: true 
+  druid:
+    username: mjf
+    password: 123456
+  http:
+    encoding:
+      charset: UTF-8
+#mybaties
+mybatis:
+  typeAliasesPackage: com.fpi.mjf.demo.entity.po
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    
+heweather:
+  api:
+    uri: https://free-api.heweather.com/s6/weather/forecast?location={0},{1}&key={2}
+    key: 9c9bc5a2fdfc4cf4b38d36694bef97c5
+
+

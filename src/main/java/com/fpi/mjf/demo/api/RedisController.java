@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.fpi.mjf.demo.entity.po.DemoEntity;
 import com.fpi.mjf.demo.mapper.DemoMapper;
-import com.fpi.mjf.demo.utils.RedisUtil;
+import com.fpi.mjf.demo.utils.restructure.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -15,9 +15,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/redis")
 public class RedisController {
-    
-    @Autowired
-    private RedisUtil redisUtil;
     
     @Autowired
     private DemoMapper mapper;
@@ -41,7 +38,7 @@ public class RedisController {
     @ApiOperation("使用自定义RedisUtil插入字符串缓存")
     @RequestMapping(value = "/setString", method = RequestMethod.GET)
     public String setString(String key, String value) {
-        redisUtil.set(key, value);
+        RedisUtil.set(key, value);
         return key + ":" + value;
     }
     
@@ -49,7 +46,7 @@ public class RedisController {
     @RequestMapping(value = "/setObject", method = RequestMethod.GET)
     public String insertObject(String name) {
         DemoEntity demo = mapper.findOneByName(name);
-        redisUtil.set(name, demo);
+        RedisUtil.set(name, demo);
         return "success";
     }
 }

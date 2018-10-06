@@ -5,7 +5,7 @@ package com.fpi.mjf.demo.entity.po;
 //
 //@Entity
 //@Table(name = "test")
-public class DemoEntity extends MySqlBasePersistent {
+public class DemoEntity extends MySqlBasePersistent implements MongoDBPersistent{
 
     /**
      * 
