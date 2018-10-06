@@ -27,3 +27,6 @@ hs_err_pid*
 .project
 .settings
 .mvn/
+
+src/main/resources/application.yaml
+
