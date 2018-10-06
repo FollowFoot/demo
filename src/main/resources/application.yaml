@@ -1,3 +1,4 @@
+active_profile:online
 spring:
   profiles:
-    active: online
+    active: ${active_profile}
