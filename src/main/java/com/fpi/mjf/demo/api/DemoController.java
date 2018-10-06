@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import com.fpi.mjf.demo.CommonConfig;
 import com.fpi.mjf.demo.entity.po.DemoEntity;
 import com.fpi.mjf.demo.entity.po.SiteData;
 import com.fpi.mjf.demo.mapper.DemoMapper;
@@ -56,8 +57,12 @@ public class DemoController {
         return mapper.findAll();
     }
     
-    @ApiOperation("测试删除")
-    @RequestMapping(value = "/update", method = {RequestMethod.GET})
+    @ApiOperation("获取环境变量")
+    @RequestMapping(value = "/get-profile", method = RequestMethod.GET)
+    public String getProfile(String name) {
+        return CommonConfig.getProperty(name);
+    }
+    
     public Map<String, Object> updateSiteData(String area) {
         String[] areas = new String[] {"菏泽学院", "市气象局", "市政协"};
         List<List<SiteData>> datas = new ArrayList<List<SiteData>>();
@@ -82,25 +87,6 @@ public class DemoController {
                 index ++;
             }
         }
-//        int m = 0;
-//        int n = 0;
-//        for(int i = 0; i < areas.length; i ++) {
-//            List<SiteData> siteDatas = siteDataMapper.getSiteDataByArea(areas[i]);
-//            for(int j = 0; j < 31; j++) {
-//                SiteData siteData = siteDatas.get(j);
-//                for(int k = 0; k < 6; k++) {
-//                    Double v = siteData.getV(factors[k]);
-//                    d1[m][0] = 1.0 * m % 31;
-//                    d2[m][0] = m % 31;
-//                    d1[m][1] = 1.0 * n % 18;
-//                    d2[m][1] = n % 18;
-//                    d1[m][2] = v;
-//                    d2[m][2] = AQITools.calIaqi(factors[k], v, false);
-//                    m ++;
-//                    n ++;
-//                }
-//            }
-//        }
         Map<String, Object> map = new HashMap<String, Object>(); 
         map.put("d1", d1);
         map.put("d2", d2);
